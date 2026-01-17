@@ -65,7 +65,9 @@ class Upload extends CI_Controller {
         ensure_dir($this->basePath);
 
         $fullPath     = $this->basePath . $filename;
-        $relativePath = str_replace(FCPATH, '', $fullPath);
+        //$relativePath = str_replace(FCPATH, '', $fullPath);
+        $relativePath = rtrim($this->profile['public_path'], '/') . '/' . $filename;
+
 
         if (!move_uploaded_file($tmp, $fullPath)) {
             return $this->error('Failed to save file');
@@ -150,18 +152,22 @@ class Upload extends CI_Controller {
     private function persistAndRespond(
         $fileUid,
         $filename,
-        $relativePath,
+        $relativePath, // akan kita override
         $mime,
         $size,
         $fullPath
     ) {
-        $publicUrl = base_url($relativePath);
+        $relativePath = rtrim($this->profile['public_path'], '/') . '/' . $filename;
+        $publicUrl    = base_url($relativePath);
+
+        $originalName = $this->input->post('original_name');
+        if (!$originalName) {
+            $originalName = $filename;
+        }
 
         $saved = $this->Cdn_file_model->create([
-            //'file_uid'   => $fileUid,
             'file_key'      => $fileUid,
-            'original_name' => $this->input->post('original_name') 
-                                ?? basename($filename),
+            'original_name' => $originalName,
             'stored_name'   => $filename,
             'mime_type'     => $mime,
             'size'          => (int) $size,
@@ -171,7 +177,7 @@ class Upload extends CI_Controller {
         ]);
 
         if (!$saved) {
-            @unlink($fullPath); // rollback
+            @unlink($fullPath);
             return $this->error('Failed to save metadata');
         }
 

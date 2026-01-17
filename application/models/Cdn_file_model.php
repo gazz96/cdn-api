@@ -10,7 +10,8 @@ class Cdn_file_model extends CI_Model {
         $this->db->insert($this->table, $data);
 
         if ($this->db->affected_rows() !== 1) {
-            log_message('error', json_encode($this->db->error()));
+            log_message('error', 'CDN INSERT FAILED: ' . json_encode($this->db->error()));
+            log_message('error', 'DATA: ' . json_encode($data));
             return false;
         }
 
