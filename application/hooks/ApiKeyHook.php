@@ -22,7 +22,6 @@ class ApiKeyHook
 
         // SET GLOBAL PROPERTY
         $this->CI->api_key_id = $apiKey->id;
-        $this->CI->api_key    = $apiKey->key;
     }
 
     public function check()
