@@ -26,6 +26,7 @@ $config['cdn'] = [
     'folder_pattern' => '/^[a-z0-9\/_-]+$/',
     'profiles' => [
         'soal_ujian' => [
+            'public' => true,
             'base_folder' => 'lembar-soal',
             'use_year'  => true,
             'use_month' => true,
