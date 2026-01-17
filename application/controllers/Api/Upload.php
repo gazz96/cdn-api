@@ -170,6 +170,9 @@ class Upload extends CI_Controller {
             'is_public'  => $this->profile['public'] ? 1 : 0,
         ]);
 
+        var_dump($saved);
+        die();
+
         if (!$saved) {
             @unlink($fullPath); // rollback
             return $this->error('Failed to save metadata');
