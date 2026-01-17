@@ -176,6 +176,9 @@ class Upload extends CI_Controller {
             'expired_at'    => null,
         ]);
 
+        var_dump($saved);
+        die();
+
         if (!$saved) {
             @unlink($fullPath);
             return $this->error('Failed to save metadata');
