@@ -32,7 +32,7 @@ $config['cdn'] = [
             'use_month' => true,
             'use_day'   => true,
             'max_size'  => 2 * 1024 * 1024, // 2MB
-            'allowed_mime' => ['*'],
+            'allowed_mime' => ['image/jpeg', 'image/png', 'image/webp', 'application/pdf',],
         ],
         'profile_image' => [
             'public' => true,
