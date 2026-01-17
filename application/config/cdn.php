@@ -25,6 +25,14 @@ $config['cdn'] = [
     'allow_custom_folder' => true,
     'folder_pattern' => '/^[a-z0-9\/_-]+$/',
     'profiles' => [
+        'soal_ujian' => [
+            'base_folder' => 'lembar-soal',
+            'use_year'  => true,
+            'use_month' => true,
+            'use_day'   => true,
+            'max_size'  => 2 * 1024 * 1024, // 2MB
+            'allowed_mime' => ['*'],
+        ],
         'profile_image' => [
             'public' => true,
             'base_folder' => 'avatars/users',
