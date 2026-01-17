@@ -7,11 +7,14 @@ class Cdn_file_model extends CI_Model {
 
     public function create(array $data)
     {
-        if (!$this->db->insert($this->table, $data)) {
+        $this->db->insert($this->table, $data);
+
+        if ($this->db->affected_rows() !== 1) {
             log_message('error', json_encode($this->db->error()));
             return false;
         }
-        return $this->db->affected_rows() === 1;
+
+        return true;
     }
 
     public function findByUid(string $uid)

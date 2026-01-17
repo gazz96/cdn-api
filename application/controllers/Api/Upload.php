@@ -158,20 +158,17 @@ class Upload extends CI_Controller {
         $publicUrl = base_url($relativePath);
 
         $saved = $this->Cdn_file_model->create([
-            'file_uid'   => $fileUid,
-            'api_key_id' => $this->api_key_id,
-            'profile'    => $this->profileName,
-            'disk_path'  => $relativePath,
-            'public_url' => $publicUrl,
-            'file_name'  => $filename,
-            'mime_type'  => $mime,
-            'file_size'  => $size,
-            'checksum'   => sha1_file($fullPath),
-            'is_public'  => $this->profile['public'] ? 1 : 0,
+            //'file_uid'   => $fileUid,
+            'file_key'      => $fileUid,
+            'original_name' => $this->input->post('original_name') 
+                                ?? basename($filename),
+            'stored_name'   => $filename,
+            'mime_type'     => $mime,
+            'size'          => (int) $size,
+            'path'          => $relativePath,
+            'is_public'     => $this->profile['public'] ? 1 : 0,
+            'expired_at'    => null,
         ]);
-
-        var_dump($saved);
-        die();
 
         if (!$saved) {
             @unlink($fullPath); // rollback
