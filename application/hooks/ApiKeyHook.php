@@ -5,59 +5,87 @@ class ApiKeyHook
 {
     protected $CI;
 
+    /**
+     * URI yang DIBEBASKAN dari API KEY
+     * (file statis / hotlink CDN)
+     */
+    protected $excludedPrefixes = [
+        'cdn/',
+        'uploads/',
+        'assets/',
+        'storage/',
+    ];
 
     public function __construct()
     {
         $this->CI =& get_instance();
-        $this->CI->load->model('Api_key_model');
-
-
-        $key = $this->CI->input->get_request_header('X-API-KEY');
-
-        $apiKey = $this->CI->Api_key_model->getActiveKey($key);
-
-        if (!$apiKey) {
-            show_error('Invalid API Key', 401);
-        }
-
-        // SET GLOBAL PROPERTY
-        $this->CI->api_key_id = $apiKey->id;
     }
 
+    /**
+     * Hook entry point
+     */
     public function check()
     {
-        // hanya protect API upload
-        $uri = $this->CI->uri->uri_string();
+        $uri = ltrim($this->CI->uri->uri_string(), '/');
 
+        /**
+         * 1. Skip jika request file statis / CDN
+         */
+        foreach ($this->excludedPrefixes as $prefix) {
+            if (strpos($uri, $prefix) === 0) {
+                return; // LEWAT TANPA API KEY
+            }
+        }
+
+        /**
+         * 2. Hanya protect API
+         */
         if (strpos($uri, 'api/') !== 0) {
             return;
         }
 
+        /**
+         * 3. Ambil API Key
+         */
         $apiKey = $this->CI->input->get_request_header('X-API-KEY', true);
 
         if (!$apiKey) {
-            return $this->_reject(401, 'API Key required');
+            return $this->reject(401, 'API Key required');
         }
 
+        /**
+         * 4. Validasi API Key
+         */
+        $this->CI->load->model('Api_key_model');
         $key = $this->CI->Api_key_model->getActiveKey($apiKey);
 
         if (!$key) {
-            return $this->_reject(401, 'Invalid API Key');
+            return $this->reject(401, 'Invalid API Key');
         }
 
-        // simple rate limit
-        if ($key->usage_count >= $key->rate_limit) {
-            return $this->_reject(429, 'Rate limit exceeded');
+        /**
+         * 5. Rate limiting (simple)
+         */
+        if ($key->rate_limit !== null && $key->usage_count >= $key->rate_limit) {
+            return $this->reject(429, 'Rate limit exceeded');
         }
 
-        // increase usage
+        /**
+         * 6. Increment usage
+         */
         $this->CI->Api_key_model->incrementUsage($apiKey);
 
-        // attach key info to CI instance
+        /**
+         * 7. Attach data ke CI instance (GLOBAL)
+         */
+        $this->CI->api_key_id   = $key->id;
         $this->CI->api_key_data = $key;
     }
 
-    private function _reject(int $code, string $message)
+    /**
+     * JSON reject response
+     */
+    protected function reject(int $code, string $message)
     {
         http_response_code($code);
         header('Content-Type: application/json');
@@ -66,6 +94,7 @@ class ApiKeyHook
             'status'  => 'error',
             'message' => $message
         ]);
+
         exit;
     }
 }
