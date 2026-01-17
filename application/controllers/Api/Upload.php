@@ -66,7 +66,7 @@ class Upload extends CI_Controller {
 
         $fullPath     = $this->basePath . $filename;
         //$relativePath = str_replace(FCPATH, '', $fullPath);
-        $relativePath = rtrim($this->profile['public_path'], '/') . '/' . $filename;
+        $relativePath = rtrim($this->profile['base_folder'], '/') . '/' . $filename;
 
 
         if (!move_uploaded_file($tmp, $fullPath)) {
@@ -157,7 +157,7 @@ class Upload extends CI_Controller {
         $size,
         $fullPath
     ) {
-        $relativePath = rtrim($this->profile['public_path'], '/') . '/' . $filename;
+        $relativePath = rtrim($this->profile['base_folder'], '/') . '/' . $filename;
         $publicUrl    = base_url($relativePath);
 
         $originalName = $this->input->post('original_name');
