@@ -46,6 +46,8 @@ class Upload extends CI_Controller {
     // =============================
     private function uploadFromFile()
     {
+        var_dump($this->input->post());
+        die();
         $tmp  = $_FILES['file']['tmp_name'];
         $size = $_FILES['file']['size'];
 
