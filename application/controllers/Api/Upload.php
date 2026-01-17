@@ -15,8 +15,6 @@ class Upload extends CI_Controller {
 
     public function index()
     {
-         var_dump($this->input->post());
-        die();
         $this->profileName = $this->input->post('profile');
         $this->profile     = cdn_profile($this->profileName);
 
@@ -48,8 +46,6 @@ class Upload extends CI_Controller {
     // =============================
     private function uploadFromFile()
     {
-        var_dump($this->input->post());
-        die();
         $tmp  = $_FILES['file']['tmp_name'];
         $size = $_FILES['file']['size'];
 
