@@ -9,6 +9,19 @@ class ApiKeyHook
     {
         $this->CI =& get_instance();
         $this->CI->load->model('Api_key_model');
+
+
+        $key = $this->CI->input->get_request_header('X-API-KEY');
+
+        $apiKey = $this->CI->Api_key_model->getActiveKey($key);
+
+        if (!$apiKey) {
+            show_error('Invalid API Key', 401);
+        }
+
+        // SET GLOBAL PROPERTY
+        $this->CI->api_key_id = $apiKey->id;
+        $this->CI->api_key    = $apiKey->key;
     }
 
     public function check()

@@ -7,7 +7,10 @@ class Cdn_file_model extends CI_Model {
 
     public function create(array $data)
     {
-        $this->db->insert($this->table, $data);
+        if (!$this->db->insert($this->table, $data)) {
+            log_message('error', json_encode($this->db->error()));
+            return false;
+        }
         return $this->db->affected_rows() === 1;
     }
 
