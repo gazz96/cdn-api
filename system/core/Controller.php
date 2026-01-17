@@ -54,6 +54,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 #[AllowDynamicProperties]
 class CI_Controller {
 
+	public $api_key_id;
+	public $api_key;
 	/**
 	 * Reference to the CI singleton
 	 *
