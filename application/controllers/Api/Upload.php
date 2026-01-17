@@ -15,6 +15,8 @@ class Upload extends CI_Controller {
 
     public function index()
     {
+         var_dump($this->input->post());
+        die();
         $this->profileName = $this->input->post('profile');
         $this->profile     = cdn_profile($this->profileName);
 
